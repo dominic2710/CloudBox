@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       x:Class="CloudBox.Photo.MainPage"
+       BackgroundColor="#FF1B3147"
+       xmlns:local="clr-namespace:CloudBox.Photo.Pages"
+       xmlns:fluent="clr-namespace:MauiIcons.Fluent;assembly=MauiIcons.Fluent"
+       Shell.NavBarIsVisible="False"
+       Shell.TabBarIsVisible="True"
+       Shell.TabBarTitleColor="#0984e3"
+       Shell.UnselectedColor="LightGray">
+
+</Shell>

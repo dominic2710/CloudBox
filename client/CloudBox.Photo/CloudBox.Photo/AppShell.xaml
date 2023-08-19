@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="CloudBox.Photo.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:CloudBox.Photo.Pages"
+    xmlns:fluent="clr-namespace:MauiIcons.Fluent;assembly=MauiIcons.Fluent"
+    xmlns:fontHelper="clr-namespace:CloudBox.Photo.Helpers"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="True"
+    Shell.TabBarTitleColor="#0984e3"
+    Shell.UnselectedColor="LightGray"
+    Shell.BackgroundColor="Blue">
+
+    <TabBar>
+        <ShellContent Title="Photos">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="IconFontTypes" Glyph="{x:Static fontHelper:IconFont.Photo}" />
+            </ShellContent.Icon>
+            <local:PhotoPage />
+        </ShellContent>
+        <ShellContent Title="Search">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="IconFontTypes" Glyph="{x:Static fontHelper:IconFont.Search}" />
+            </ShellContent.Icon>
+            <local:SearchPage />
+        </ShellContent>
+        <ShellContent Title="Sharing">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="IconFontTypes" Glyph="{x:Static fontHelper:IconFont.Share}" />
+            </ShellContent.Icon>
+            <local:SharingPage />
+        </ShellContent>
+        <ShellContent Title="Libraries">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="IconFontTypes" Glyph="{x:Static fontHelper:IconFont.Photo_library}" />
+            </ShellContent.Icon>
+            <local:LibraryPage />
+        </ShellContent>
+    </TabBar>
+</Shell>
