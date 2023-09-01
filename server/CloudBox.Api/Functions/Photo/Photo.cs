@@ -11,6 +11,6 @@
         public bool IsDelete { get; set; }
         public DateTime CreateDate { get; set; }
         //public byte[] PhotoData { get; set; } = null!;
-        //public byte[] ThumnailData { get; set; } = null!;
+        public byte[] ThumnailData { get; set; } = null!;
     }
 }

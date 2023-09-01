@@ -88,4 +88,6 @@
 	  </MauiXaml>
 	</ItemGroup>
 
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionCloudBoxPhotoHideInfoBar="True" /></VisualStudio></ProjectExtensions>
+
 </Project>

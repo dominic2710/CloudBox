@@ -89,7 +89,7 @@ namespace CloudBox.Api.Controllers.Photo
 
             try
             {
-                var userId = 1;
+                var userId = 2;
 
                 var imagesDirectory = Path.Combine(UPLOAD_ROOT_PATH, $"images/{userId}/");
                 var thumnailsDirectory = Path.Combine(UPLOAD_ROOT_PATH, $"thumnails/{userId}/");
@@ -124,7 +124,7 @@ namespace CloudBox.Api.Controllers.Photo
 
                     using (var image = Image.FromFile(originalFilePath))
                     {
-                        int thumbnailWidth = 256; // Set the desired width for the thumbnail (you can adjust this value)
+                        int thumbnailWidth = 128; // Set the desired width for the thumbnail (you can adjust this value)
                         int thumbnailHeight = (int)(thumbnailWidth * ((double)image.Height / image.Width));
 
                         using (var thumbnail = new Bitmap(thumbnailWidth, thumbnailHeight, PixelFormat.Format32bppArgb))

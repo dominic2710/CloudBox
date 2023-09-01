@@ -48,23 +48,25 @@ namespace CloudBox.Api.Functions.Photo
         //    return imageData;
         //}
 
-        //public byte[] GetThumnailData(int userId, string fileName)
-        //{
-        //    var filePath = Path.Combine(configuration["PhotoStoreLocation"],
-        //                                "thumnails",
-        //                                userId.ToString(),
-        //                                fileName);
-        //    byte[] imageData;
-        //    using (var stream = new FileStream(filePath, FileMode.Open))
-        //    {
-        //        using (var memoryStream = new MemoryStream())
-        //        {
-        //            stream.CopyTo(memoryStream);
-        //            imageData = memoryStream.ToArray();
-        //        }
-        //    }
-        //    return imageData;
-        //}
+        public byte[] GetThumnailData(int userId, string fileName)
+        {
+            var filePath = Path.Combine(configuration["PhotoStoreLocation"],
+                                        "thumnails",
+                                        userId.ToString(),
+                                        fileName);
+            if (!File.Exists(filePath)) return new byte[0];
+
+            byte[] imageData;
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    stream.CopyTo(memoryStream);
+                    imageData = memoryStream.ToArray();
+                }
+            }
+            return imageData;
+        }
 
         public Photo Create(string title, int width, int height)
         {
@@ -106,6 +108,7 @@ namespace CloudBox.Api.Functions.Photo
                 IsDelete = entity.IsDelete,
                 OwnerUserId = entity.OwnerUserId,
                 ThumbnailId = entity.ThumbnailId,
+                ThumnailData = GetThumnailData(entity.OwnerUserId, entity.Title),
             };
         }
     }

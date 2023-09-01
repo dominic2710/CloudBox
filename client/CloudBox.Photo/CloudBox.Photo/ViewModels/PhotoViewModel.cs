@@ -80,9 +80,13 @@ namespace CloudBox.Photo.ViewModels
             {
                 IsRefreshing = true;
                 var response = await Services.ServiceProvider.GetInstance().CallWebApi<int,
-                        GetListPhotoResponse>("/api/Photo/getlistphoto", HttpMethod.Post, 1);
+                        GetListPhotoResponse>("/api/Photo/getlistphoto", HttpMethod.Post, 2);
 
                 var photos = response.ListPhoto.OrderByDescending(x => x.CreateDate).ToList();
+                photos.ForEach(x =>
+                {
+                    x.ImageSource = ImageSource.FromStream(() => new MemoryStream(x.ThumnailData));
+                });
                 _allPhotoGroupList = photos.GroupBy(x => x.TruncateDate)
                                                     .Select(x => new PhotoGroupModel
                                                     (
@@ -212,15 +216,17 @@ namespace CloudBox.Photo.ViewModels
                 if (selectedFiles != null && selectedFiles.Count() > 0)
                 {
                     var uploadingRange = new List<PhotoModel>();
-                    for (int i=0; i< selectedFiles.Count(); i++)
-                    {
-                        uploadingRange.Add(new PhotoModel
-                        {
-                            IsUploading = true,
-                        });
-                    }
-                    ListPhotoGroup.Insert(0, new PhotoGroupModel("Just now", uploadingRange));
+                    //for (int i=0; i< selectedFiles.Count(); i++)
+                    //{
+                    //    uploadingRange.Add(new PhotoModel
+                    //    {
+                    //        IsUploading = true,
+                    //    });
+                    //}
+                    //ListPhotoGroup.Insert(0, new PhotoGroupModel("Just now", uploadingRange));
 
+                    var count = 0;
+                    var filePerTime = 5;
                     var formData = new MultipartFormDataContent();
 
                     foreach (var imageFile in selectedFiles)
@@ -228,21 +234,16 @@ namespace CloudBox.Photo.ViewModels
                         var imageStream = await imageFile.OpenReadAsync();
                         var streamContent = new StreamContent(imageStream);
                         formData.Add(streamContent, "files", imageFile.FileName);
+
+                        count++;
+                        if (count > filePerTime)
+                        {
+                            var result = await Services.ServiceProvider.GetInstance().UploadPhoto(formData);
+                            count = 0;
+                            formData = new MultipartFormDataContent();
+                        }
                     }
 
-                    var result = await Services.ServiceProvider.GetInstance().UploadPhoto(formData);
-                    //for (int i = 0; i < selectedFiles.Count(); i++)
-                    //{
-                    //    uploadingRange[i].Id = result[i].Id;
-                    //    uploadingRange[i].IsUploading = false;
-                    //    uploadingRange[i].IsDelete = result[i].IsDelete;
-                    //    uploadingRange[i].OwnerUserId = result[i].OwnerUserId;
-                    //    uploadingRange[i].ThumbnailId = result[i].ThumbnailId;
-                    //    uploadingRange[i].CreateDate = result[i].CreateDate;
-                    //    uploadingRange[i].Height = result[i].Height;
-                    //    uploadingRange[i].Width = result[i].Width;
-                    //    uploadingRange[i].Title = result[i].Title;
-                    //}
                 }
                 FetchAllPhoto();
             }

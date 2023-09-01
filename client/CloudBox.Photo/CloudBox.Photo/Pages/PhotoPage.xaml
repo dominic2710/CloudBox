@@ -48,8 +48,10 @@
                     </CollectionView.GroupHeaderTemplate>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <views:PhotoItemView Url="{Binding Url}" WidthRequest="100"
-                                                 HeightRequest="100"/>
+                            <Image x:Name="imgMain" Aspect="AspectFill" WidthRequest="100" HeightRequest="100"
+                                   Source="{Binding ImageSource}" />
+                            <!--<views:PhotoItemView Url="{Binding Url}" WidthRequest="100"
+                            HeightRequest="100"/>-->
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

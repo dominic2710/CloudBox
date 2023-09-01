@@ -29,12 +29,9 @@ namespace CloudBox.Photo.Models
         public bool IsDownloading { get; set; }
         public string Url
         {
-            //set { 
-            //    Url = value; 
-            //    //OnPropertyChanged(); 
-            //}
             get { return $"/api/photo/getthumnail/{OwnerUserId}/{Title}"; }
         }
-
+        public byte[] ThumnailData { get; set; }
+        public ImageSource ImageSource { get; set; }
     }
 }
