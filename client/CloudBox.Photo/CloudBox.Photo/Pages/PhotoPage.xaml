@@ -37,7 +37,7 @@
                                 RemainingItemsThreshold="8" RemainingItemsThresholdReachedCommand="{Binding FetchNextPhotoCommand}"
                                 HeightRequest="600">
                     <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Vertical" Span="4" VerticalItemSpacing="5" HorizontalItemSpacing="5"/>
+                        <GridItemsLayout Orientation="Vertical" Span="3" VerticalItemSpacing="5" HorizontalItemSpacing="5"/>
                     </CollectionView.ItemsLayout>
                     <CollectionView.GroupHeaderTemplate>
                         <DataTemplate>
@@ -48,8 +48,7 @@
                     </CollectionView.GroupHeaderTemplate>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <views:PhotoItemView Url="{Binding Url}" WidthRequest="100"
-                                                 HeightRequest="100"/>
+                            <views:PhotoItemView Url="{Binding Url}" />
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

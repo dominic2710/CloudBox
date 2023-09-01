@@ -124,7 +124,7 @@ namespace CloudBox.Api.Controllers.Photo
 
                     using (var image = Image.FromFile(originalFilePath))
                     {
-                        int thumbnailWidth = 256; // Set the desired width for the thumbnail (you can adjust this value)
+                        int thumbnailWidth = 164; // Set the desired width for the thumbnail (you can adjust this value)
                         int thumbnailHeight = (int)(thumbnailWidth * ((double)image.Height / image.Width));
 
                         using (var thumbnail = new Bitmap(thumbnailWidth, thumbnailHeight, PixelFormat.Format32bppArgb))

@@ -80,7 +80,7 @@ namespace CloudBox.Photo.ViewModels
             {
                 IsRefreshing = true;
                 var response = await Services.ServiceProvider.GetInstance().CallWebApi<int,
-                        GetListPhotoResponse>("/api/Photo/getlistphoto", HttpMethod.Post, 1);
+                        GetListPhotoResponse>("/api/Photo/getlistphoto", HttpMethod.Post, 3);
 
                 var photos = response.ListPhoto.OrderByDescending(x => x.CreateDate).ToList();
                 _allPhotoGroupList = photos.GroupBy(x => x.TruncateDate)

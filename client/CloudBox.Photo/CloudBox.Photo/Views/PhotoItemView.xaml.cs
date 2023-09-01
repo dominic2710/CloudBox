@@ -1,3 +1,4 @@
+using CloudBox.Photo.Helpers;
 using System.ComponentModel;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -26,25 +27,27 @@ public partial class PhotoItemView : ContentView
     {
         if (String.IsNullOrEmpty(Url)) return;
 
-        lblUrl.Text = Url;
-        //var imageBytes = await Services.ServiceProvider.GetInstance().GetByteArrayAsync(Url);
-        //if (imageBytes != null)
-        //{
-        //    var imageSource = ImageSource.FromStream(() => new MemoryStream(imageBytes));
-        //    await Dispatcher.DispatchAsync(() =>
-        //    {
-        //        lblUrl.Text = Url;
-        //        //imgMain.Source = imageSource;
-        //    });
-        //}
-        //else
-        //{
-        //    //imgMain.Source = ImageSource.FromFile("image_fail.png");
-        //}
+        //lblUrl.Text = Url;
+        var imageBytes = await Services.ServiceProvider.GetInstance().GetByteArrayAsync(Url);
+        if (imageBytes != null)
+        {
+            var imageSource = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+            
+            await Dispatcher.DispatchAsync(() =>
+            {
+                //lblUrl.Text = Url;
+                imgMain.Source = imageSource;
+            });
+        }
+        else
+        {
+            imgMain.Source = Global.IMAGE_LOAD_FAILED;
+        }
     }
 
     private void ContentView_Loaded(object sender, EventArgs e)
     {
+        imgMain.Source = Global.IMAGE_LOADING;
         Task.Run(async () =>
         {
             await GetPhoto();
