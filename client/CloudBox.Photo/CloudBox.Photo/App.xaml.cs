@@ -1,4 +1,6 @@
-﻿namespace CloudBox.Photo;
+﻿using CloudBox.Photo.Pages;
+
+namespace CloudBox.Photo;
 
 public partial class App : Application
 {
@@ -6,6 +8,6 @@ public partial class App : Application
 	{
 		InitializeComponent();
 
-		MainPage = new AppShell();
+		MainPage = new LoginPage();
 	}
 }

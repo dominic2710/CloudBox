@@ -33,10 +33,10 @@ namespace CloudBox.Photo.Helpers
         public string DevServerName =>
 #if WINDOWS
         //"localhost";
-        "192.168.1.20";
+        "192.168.1.6";
 #elif ANDROID
             //"10.0.2.2";
-            "192.168.1.20";
+            "192.168.1.6";
 #else
         throw new PlatformNotSupportedException("Only Windows and Android currently supported.");
 #endif
@@ -76,7 +76,7 @@ namespace CloudBox.Photo.Helpers
                 {
                     return
                         Javax.Net.Ssl.HttpsURLConnection.DefaultHostnameVerifier.Verify(hostname, session)
-                        || (hostname == "10.0.2.2" || hostname == "192.168.1.20") && session.PeerPrincipal?.Name == "CN=localhost";
+                        || (hostname == "10.0.2.2" || hostname == "192.168.1.6") && session.PeerPrincipal?.Name == "CN=localhost";
                 }
             }
         }

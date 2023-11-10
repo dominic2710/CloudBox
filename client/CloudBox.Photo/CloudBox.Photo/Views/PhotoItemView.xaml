@@ -5,8 +5,7 @@
              xmlns:fontHelper="clr-namespace:CloudBox.Photo.Helpers"
              Loaded="ContentView_Loaded">
     <Grid>
-        <!--<Image x:Name="imgMain" Aspect="AspectFill" WidthRequest="100" HeightRequest="100"
-        Source="image_icon.jpg" />-->
-        <Label x:Name="lblUrl"/>
+        <Image x:Name="imgMain" Aspect="AspectFit" IsOpaque="True" />
+        <!--<Label x:Name="lblUrl"/>-->
     </Grid>
 </ContentView>

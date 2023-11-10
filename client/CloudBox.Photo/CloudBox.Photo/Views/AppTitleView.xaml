@@ -7,10 +7,11 @@
         <Image Source="cloud_photo_logo.jpg" HeightRequest="48" Margin="0,0,10,0"
                VerticalOptions="Center"/>
 
-        <ImageButton HorizontalOptions="End">
+        <ImageButton HorizontalOptions="End" Clicked="ImageButton_Clicked">
             <ImageButton.Source>
                 <FontImageSource FontFamily="IconFontTypes" Glyph="{x:Static fontHelper:IconFont.Account_circle}" Color="Gray"/>
             </ImageButton.Source>
+
         </ImageButton>
     </Grid>
 </ContentView>

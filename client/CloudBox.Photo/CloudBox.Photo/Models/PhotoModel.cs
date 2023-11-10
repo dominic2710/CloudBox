@@ -27,14 +27,13 @@ namespace CloudBox.Photo.Models
         }
         public bool IsUploading { get; set; }
         public bool IsDownloading { get; set; }
-        public string Url
+        public string ThumnailUrl
         {
-            //set { 
-            //    Url = value; 
-            //    //OnPropertyChanged(); 
-            //}
             get { return $"/api/photo/getthumnail/{OwnerUserId}/{Title}"; }
         }
-
+        public string PhotoUrl
+        {
+            get { return $"/api/photo/getphoto/{OwnerUserId}/{Title}"; }
+        }
     }
 }

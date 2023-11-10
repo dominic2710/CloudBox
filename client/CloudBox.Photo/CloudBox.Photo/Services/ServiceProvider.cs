@@ -40,7 +40,7 @@ namespace CloudBox.Photo.Services
         {
             var httpRequestMessage = new HttpRequestMessage();
             httpRequestMessage.Method = HttpMethod.Post;
-            httpRequestMessage.RequestUri = new Uri(_devSslHelper.DevServerRootUrl + "/Authenticate/Authenticate");
+            httpRequestMessage.RequestUri = new Uri(_devSslHelper.DevServerRootUrl + "/User/login");
 
             if (request != null)
             {
@@ -54,18 +54,27 @@ namespace CloudBox.Photo.Services
                 var response = await _devSslHelper.HttpClient.SendAsync(httpRequestMessage);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
-                var result = JsonConvert.DeserializeObject<LoginResponse>(responseContent);
-                result.StatusCode = (int)response.StatusCode;
-
-                if (result.StatusCode == 200)
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    _accessToken = result.Token;
+                    var result = JsonConvert.DeserializeObject<LoginResponse>(responseContent);
+                    result.StatusCode = (int)response.StatusCode;
+
+                    _accessToken = result.AccessToken;
 
                     _devSslHelper.HttpClient.DefaultRequestHeaders.Authorization =
                                         new AuthenticationHeaderValue("Bearer", _accessToken);
+                    return result;
 
                 }
-                return result;
+                else
+                {
+                    var result = new LoginResponse
+                    {
+                        StatusCode = (int)response.StatusCode,
+                        StatusMessage = responseContent
+                    };
+                    return result;
+                }
             }
             catch (Exception ex)
             {
@@ -84,8 +93,8 @@ namespace CloudBox.Photo.Services
             var httpRequestMessage = new HttpRequestMessage();
             httpRequestMessage.Method = httpMethod;
             httpRequestMessage.RequestUri = new Uri(_devSslHelper.DevServerRootUrl + apiUrl);
-            //httpRequestMessage.Headers.Authorization =
-            //    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);
+            httpRequestMessage.Headers.Authorization =
+                new AuthenticationHeaderValue("Bearer", _accessToken);
 
             if (request != null)
             {
@@ -130,8 +139,18 @@ namespace CloudBox.Photo.Services
 
         public async Task<List<PhotoModel>> UploadPhoto(MultipartFormDataContent fileContents)
         {
-            var requestUri = new Uri(_devSslHelper.DevServerRootUrl + "/api/Photo/uploadmultifile");
-            var response = await _devSslHelper.HttpClient.PostAsync(requestUri, fileContents);
+
+            var httpRequestMessage = new HttpRequestMessage();
+            httpRequestMessage.Method = HttpMethod.Post;
+            httpRequestMessage.RequestUri = new Uri(_devSslHelper.DevServerRootUrl + "/api/Photo/uploadmultifile");
+            httpRequestMessage.Headers.Authorization =
+                new AuthenticationHeaderValue("Bearer", _accessToken);
+            httpRequestMessage.Content = fileContents;
+
+            //var requestUri = new Uri(_devSslHelper.DevServerRootUrl + "");
+            //var response = await _devSslHelper.HttpClient.PostAsync(requestUri, fileContents);
+
+            var response = await _devSslHelper.HttpClient.SendAsync(httpRequestMessage);
 
             if (response.IsSuccessStatusCode)
             {
