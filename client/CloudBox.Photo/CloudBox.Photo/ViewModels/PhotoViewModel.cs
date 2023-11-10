@@ -25,7 +25,7 @@ namespace CloudBox.Photo.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        private int _minPageSize = 16;
+        private int _minPageSize = 15;
         private int _currentPage = 0;
         private List<PhotoGroupModel> _allPhotoGroupList;
         private ObservableCollection<string> listAlbumThumnail;
@@ -57,6 +57,7 @@ namespace CloudBox.Photo.ViewModels
         public ICommand UploadPhotoCommand { get; set; }
         public ICommand RefreshCommand { get; set; }
         public ICommand FetchNextPhotoCommand { get; set; }
+        public ICommand ViewPhotoCommand { get; set; }
         public PhotoViewModel()
         {
             
@@ -70,17 +71,18 @@ namespace CloudBox.Photo.ViewModels
             UploadPhotoCommand = new Command(OpenFile);
             RefreshCommand = new Command(FetchAllPhoto);
             FetchNextPhotoCommand = new Command(FetchNextPhoto);
+            ViewPhotoCommand = new Command(p => ViewPhoto(p as PhotoModel));
         }
 
         public void FetchAllPhoto()
         {
             ListPhotoGroup = new ObservableCollection<PhotoGroupModel>();
-            //ListPhoto = new ObservableCollection<PhotoModel>();
             Task.Run(async () =>
             {
                 IsRefreshing = true;
+                _currentPage = 0;
                 var response = await Services.ServiceProvider.GetInstance().CallWebApi<int,
-                        GetListPhotoResponse>("/api/Photo/getlistphoto", HttpMethod.Post, 3);
+                        GetListPhotoResponse>("/api/Photo/getlistphoto", HttpMethod.Post, Global.LOGIN_USERID);
 
                 var photos = response.ListPhoto.OrderByDescending(x => x.CreateDate).ToList();
                 _allPhotoGroupList = photos.GroupBy(x => x.TruncateDate)
@@ -109,35 +111,7 @@ namespace CloudBox.Photo.ViewModels
                 }
                 _currentPage++;
 
-
-                //foreach (var item in groupDate)
-                //{
-                //    var photoRange = photoToBeDisplay.Where(x => x.TruncateDate == item)
-                //                                        .OrderByDescending(x => x.CreateDate)
-                //                                        .ToList();
-                //    ListPhotoGroup.Add(new PhotoGroupModel(item.ToString("dd/MM/yyyy"),
-                //                                        photoRange));
-                //}
-                //_allPhotoList = 
-
-                //var photoToBeDisplay = _allPhotoList.Take(_minPageSize).ToList();
-
-                ////foreach (var photo in photoToBeDisplay)
-                ////    ListPhoto.Add(photo);
-
-                ////OnPropertyChanged(nameof(ListPhoto));
-
-                //var groupDate = photoToBeDisplay
-
-                //foreach (var item in groupDate)
-                //{
-                //    var photoRange = photoToBeDisplay.Where(x => x.TruncateDate == item)
-                //                                        .OrderByDescending(x => x.CreateDate)
-                //                                        .ToList();
-                //    ListPhotoGroup.Add(new PhotoGroupModel(item.ToString("dd/MM/yyyy"),
-                //                                        photoRange));
-                //}
-                OnPropertyChanged(nameof(ListPhotoGroup));
+                 OnPropertyChanged(nameof(ListPhotoGroup));
             }).GetAwaiter().OnCompleted(()=>
             {
                 IsRefreshing = false;
@@ -148,41 +122,6 @@ namespace CloudBox.Photo.ViewModels
         {
             if (IsRefreshing) return;
 
-            //var displayedPhotoCount = ListPhoto.Count();
-            //var displayedPhotoCount = ListPhotoGroup.Sum(x => x.Count());
-            //if (displayedPhotoCount >= _allPhotoGroupList.Count) return;
-            //if (_allPhotoGroupList.Count > 0)
-            //{
-            //    var photoToBeDisplay = _allPhotoGroupList.Skip(displayedPhotoCount).Take(_minPageSize).ToList();
-
-            //    //foreach (var photo in photoToBeDisplay)
-            //    //    ListPhoto.Add(photo);
-
-            //    //OnPropertyChanged(nameof(ListPhoto));
-            //    var groupDate = photoToBeDisplay.GroupBy(x => x.TruncateDate)
-            //                                        .Select(x => x.Key)
-            //                                        .OrderByDescending(x => x)
-            //                                        .ToList();
-
-            //    foreach (var item in groupDate)
-            //    {
-            //        var photoRange = photoToBeDisplay.Where(x => x.TruncateDate == item)
-            //                                            .OrderByDescending(x => x.CreateDate)
-            //                                            .ToList();
-            //        var lastedGroup = ListPhotoGroup.Where(x => x.Where(x => x.TruncateDate == item) != null)
-            //                                .FirstOrDefault();
-            //        if (lastedGroup != null && lastedGroup.Count > 0)
-            //        {
-            //            lastedGroup.AddRange(photoRange);
-            //        }
-            //        else
-            //        {
-            //            ListPhotoGroup.Add(new PhotoGroupModel(item.ToString("dd/MM/yyyy"),
-            //                                                photoRange));
-            //        }
-            //    }
-            //    OnPropertyChanged(nameof(ListPhotoGroup));
-            //}
             var minDisplayCount = (_currentPage * _minPageSize) + _minPageSize;
             var displayCount = 0;
             var groupItemCount = 0;
@@ -198,6 +137,11 @@ namespace CloudBox.Photo.ViewModels
                 ListPhotoGroup.Add(_allPhotoGroupList[i]);
             }
             _currentPage++;
+        }
+
+        public void ViewPhoto(PhotoModel photo)
+        {
+            Shell.Current.GoToAsync($"ViewPhotoPage?Url={photo.PhotoUrl}");
         }
 
         async void OpenFile(object commandParameter)
@@ -231,18 +175,6 @@ namespace CloudBox.Photo.ViewModels
                     }
 
                     var result = await Services.ServiceProvider.GetInstance().UploadPhoto(formData);
-                    //for (int i = 0; i < selectedFiles.Count(); i++)
-                    //{
-                    //    uploadingRange[i].Id = result[i].Id;
-                    //    uploadingRange[i].IsUploading = false;
-                    //    uploadingRange[i].IsDelete = result[i].IsDelete;
-                    //    uploadingRange[i].OwnerUserId = result[i].OwnerUserId;
-                    //    uploadingRange[i].ThumbnailId = result[i].ThumbnailId;
-                    //    uploadingRange[i].CreateDate = result[i].CreateDate;
-                    //    uploadingRange[i].Height = result[i].Height;
-                    //    uploadingRange[i].Width = result[i].Width;
-                    //    uploadingRange[i].Title = result[i].Title;
-                    //}
                 }
                 FetchAllPhoto();
             }

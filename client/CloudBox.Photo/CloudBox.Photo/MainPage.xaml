@@ -4,7 +4,7 @@
        x:Class="CloudBox.Photo.MainPage"
        BackgroundColor="#FF1B3147"
        xmlns:local="clr-namespace:CloudBox.Photo.Pages"
-       xmlns:fluent="clr-namespace:MauiIcons.Fluent;assembly=MauiIcons.Fluent"
+       xmlns:fontHelper="clr-namespace:CloudBox.Photo.Helpers"
        Shell.NavBarIsVisible="False"
        Shell.TabBarIsVisible="True"
        Shell.TabBarTitleColor="#0984e3"

@@ -82,7 +82,7 @@ namespace CloudBox.Api.Functions.Photo
             {
                 Title = title,
                 IsDelete = false,
-                OwnerUserId = 1,
+                OwnerUserId = _userOperator.GetRequestUser().Id,
                 ThumbnailId = thumnail.Id,
                 Width = width,
                 Height = height,

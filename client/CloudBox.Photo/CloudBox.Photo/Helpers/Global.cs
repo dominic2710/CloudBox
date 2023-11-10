@@ -10,5 +10,6 @@ namespace CloudBox.Photo.Helpers
     {
         public static ImageSource IMAGE_LOADING = ImageSource.FromFile("image_icon.jpg");
         public static ImageSource IMAGE_LOAD_FAILED = ImageSource.FromFile("image_fail.png");
+        public static int LOGIN_USERID;
     }
 }

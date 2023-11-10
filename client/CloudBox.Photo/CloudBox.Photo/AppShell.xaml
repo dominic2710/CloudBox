@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:CloudBox.Photo.Pages"
     xmlns:fluent="clr-namespace:MauiIcons.Fluent;assembly=MauiIcons.Fluent"
     xmlns:fontHelper="clr-namespace:CloudBox.Photo.Helpers"
+    xmlns:pages="clr-namespace:CloudBox.Photo.Pages"
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="True"
     Shell.TabBarTitleColor="#0984e3"
@@ -38,4 +39,6 @@
             <local:LibraryPage />
         </ShellContent>
     </TabBar>
+
+
 </Shell>

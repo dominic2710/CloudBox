@@ -4,6 +4,7 @@ using CloudBox.Api.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 //using System.Drawing.
 
@@ -16,7 +17,7 @@ namespace CloudBox.Api.Controllers.Photo
         private IPhotoFunction _photoFunction;
         private UserOperator _userOperator;
 
-        const string UPLOAD_ROOT_PATH = "D:\\_TmpC\\_cloudphoto";
+        const string UPLOAD_ROOT_PATH = @"D:\_TmpC\_cloudphoto2";
 
         public PhotoController(IPhotoFunction photoFunction, 
                                 UserOperator userOperator)
@@ -31,11 +32,11 @@ namespace CloudBox.Api.Controllers.Photo
             if (file == null || file.Length == 0)
                 return BadRequest("Invalid file");
 
-            //var userId = _userOperator.GetRequestUser().Id;
-            var userId = 1;
+            var userId = _userOperator.GetRequestUser().Id;
+            //var userId = 1;
 
-            FileAccessHelper.CreateFolderIfNotExist(Path.Combine(UPLOAD_ROOT_PATH, $"images/{userId}/"));
-            FileAccessHelper.CreateFolderIfNotExist(Path.Combine(UPLOAD_ROOT_PATH, $"thumnails/{userId}/"));
+            FileAccessHelper.CreateFolderIfNotExist(Path.Combine(UPLOAD_ROOT_PATH, @$"images\{userId}\"));
+            FileAccessHelper.CreateFolderIfNotExist(Path.Combine(UPLOAD_ROOT_PATH, @$"thumnails\{userId}\"));
 
             // Get the file extension
             var fileExtension = Path.GetExtension(file.FileName);
@@ -44,7 +45,7 @@ namespace CloudBox.Api.Controllers.Photo
             var fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + fileExtension;
 
             // Save the original file to the server's wwwroot/images folder
-            var filePath = Path.Combine(UPLOAD_ROOT_PATH, $"images/{userId}/", fileName);
+            var filePath = Path.Combine(UPLOAD_ROOT_PATH, @$"images\{userId}\", fileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
@@ -53,26 +54,36 @@ namespace CloudBox.Api.Controllers.Photo
 
             // Create the thumbnail
             var thumbnailFileName = fileName;
-            var thumbnailFilePath = Path.Combine(UPLOAD_ROOT_PATH, $"thumnails/{userId}/", thumbnailFileName);
+            var thumbnailFilePath = Path.Combine(UPLOAD_ROOT_PATH, @$"thumnails\{userId}\", thumbnailFileName);
 
-            using (var image = Image.FromFile(filePath))
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
-                int thumbnailWidth = 256; // Set the desired width for the thumbnail (you can adjust this value)
-                int thumbnailHeight = (int)(thumbnailWidth * ((double)image.Height / image.Width));
-
-                using (var thumbnail = new Bitmap(thumbnailWidth, thumbnailHeight))
+                using (var image = Image.FromStream(fs))
                 {
-                    using (var graphics = Graphics.FromImage(thumbnail))
+                    var cropSize = image.Size.Height > image.Size.Width ? image.Size.Width : image.Size.Height;
+                    var scrX = (image.Size.Width - cropSize) / 2;
+                    var scrY = (image.Size.Height - cropSize) / 2;
+
+                    var thumnailSize = 256;
+                    var destRect = new Rectangle(0, 0, thumnailSize, thumnailSize);
+
+                    using (var thumbnail = new Bitmap(thumnailSize, thumnailSize))
                     {
-                        graphics.Clear(Color.Transparent);
-                        graphics.DrawImage(image, 0, 0, thumbnailWidth, thumbnailHeight);
+                        using (var graphics = Graphics.FromImage(thumbnail))
+                        {
+                            graphics.Clear(Color.Transparent);
+                            graphics.CompositingQuality = CompositingQuality.HighQuality;
+                            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                            graphics.SmoothingMode = SmoothingMode.HighQuality;
+                            graphics.DrawImage(image, destRect, scrX, scrY, cropSize, cropSize, GraphicsUnit.Pixel);
+                        }
+
+                        // Save the thumbnail to the server's wwwroot/images folder
+                        thumbnail.Save(thumbnailFilePath, ImageFormat.Jpeg);
                     }
 
-                    // Save the thumbnail to the server's wwwroot/images folder
-                    thumbnail.Save(thumbnailFilePath, ImageFormat.Jpeg);
+                    _photoFunction.Create(fileName, image.Width, image.Height);
                 }
-
-                _photoFunction.Create(fileName, image.Width, image.Height);
             }
 
             // Return the URL of the uploaded image and its thumbnail
@@ -89,10 +100,10 @@ namespace CloudBox.Api.Controllers.Photo
 
             try
             {
-                var userId = 1;
+                var userId = _userOperator.GetRequestUser().Id;
 
-                var imagesDirectory = Path.Combine(UPLOAD_ROOT_PATH, $"images/{userId}/");
-                var thumnailsDirectory = Path.Combine(UPLOAD_ROOT_PATH, $"thumnails/{userId}/");
+                var imagesDirectory = Path.Combine(UPLOAD_ROOT_PATH, $@"images\{userId}\");
+                var thumnailsDirectory = Path.Combine(UPLOAD_ROOT_PATH, $@"thumnails\{userId}\");
 
                 FileAccessHelper.CreateFolderIfNotExist(Path.Combine(imagesDirectory));
                 FileAccessHelper.CreateFolderIfNotExist(Path.Combine(thumnailsDirectory));
@@ -124,19 +135,26 @@ namespace CloudBox.Api.Controllers.Photo
 
                     using (var image = Image.FromFile(originalFilePath))
                     {
-                        int thumbnailWidth = 164; // Set the desired width for the thumbnail (you can adjust this value)
-                        int thumbnailHeight = (int)(thumbnailWidth * ((double)image.Height / image.Width));
+                        var cropSize = image.Size.Height > image.Size.Width ? image.Size.Width : image.Size.Height;
+                        var scrX = (image.Size.Width - cropSize) / 2;
+                        var scrY = (image.Size.Height - cropSize) / 2;
 
-                        using (var thumbnail = new Bitmap(thumbnailWidth, thumbnailHeight, PixelFormat.Format32bppArgb))
+                        var thumnailSize = 256;
+                        var destRect = new Rectangle(0, 0, thumnailSize, thumnailSize);
+
+                        using (var thumbnail = new Bitmap(thumnailSize, thumnailSize))
                         {
                             using (var graphics = Graphics.FromImage(thumbnail))
                             {
-                                graphics.Clear(Color.Transparent); // Preserve transparency for thumbnail background
-                                graphics.DrawImage(image, 0, 0, thumbnailWidth, thumbnailHeight);
+                                graphics.Clear(Color.Transparent);
+                                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                                graphics.DrawImage(image, destRect, scrX, scrY, cropSize, cropSize, GraphicsUnit.Pixel);
                             }
 
-                            // Save the thumbnail as PNG to preserve transparency
-                            thumbnail.Save(thumbnailFilePath, ImageFormat.Png);
+                            // Save the thumbnail to the server's wwwroot/images folder
+                            thumbnail.Save(thumbnailFilePath, ImageFormat.Jpeg);
                         }
 
                         var entity = _photoFunction.Create(fileName, image.Width, image.Height);
@@ -163,7 +181,7 @@ namespace CloudBox.Api.Controllers.Photo
             return Ok(response);
         }
 
-        [HttpGet("getphoto/{fileName}")]
+        [HttpGet("getphoto/{userId}/{fileName}")]
         public IActionResult GetPhoto(string userId, string fileName)
         {
             var imagesDirectory = Path.Combine(UPLOAD_ROOT_PATH, $"images/{userId}/");

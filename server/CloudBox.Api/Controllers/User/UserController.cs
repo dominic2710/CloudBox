@@ -25,7 +25,7 @@ namespace CloudBox.Api.Controllers.User
             var user = _userFunction.Authenticate(request.Email, request.Password);
 
             if (user == null)
-                return BadRequest("Invalid username or password!");
+                return Unauthorized("Invalid username or password!");
 
             var response = new LoginResponse
             {

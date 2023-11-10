@@ -14,28 +14,28 @@
             <VerticalStackLayout>
                 <views:AppTitleView/>
 
-                <CollectionView Margin="0,10,0,10" ItemsSource="{Binding ListAlbumThumnail}">
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout ItemSpacing="5" Orientation="Horizontal" />
-                    </CollectionView.ItemsLayout>
+                <!--<CollectionView Margin="0,10,0,10" ItemsSource="{Binding ListAlbumThumnail}" IsVisible="False">
+                <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="5" Orientation="Horizontal" />
+                </CollectionView.ItemsLayout>
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Frame WidthRequest="112" HeightRequest="164"
-                                   CornerRadius="10"
-                                   HorizontalOptions="Center"
-                                   IsClippedToBounds="True"
-                                   Padding="0"
-                                   Margin="10,0,5,0">
-                                <Image Source="{Binding}" Aspect="AspectFit"/>
-                            </Frame>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                <CollectionView.ItemTemplate>
+                <DataTemplate>
+                <Frame WidthRequest="112" HeightRequest="164"
+                CornerRadius="10"
+                HorizontalOptions="Center"
+                IsClippedToBounds="True"
+                Padding="0"
+                Margin="10,0,5,0">
+                <Image Source="{Binding}" Aspect="AspectFit"/>
+                </Frame>
+                </DataTemplate>
+                </CollectionView.ItemTemplate>
+                </CollectionView>-->
 
                 <CollectionView x:Name="cvPhotos" ItemsSource="{Binding ListPhotoGroup}" IsGrouped="True"
                                 RemainingItemsThreshold="8" RemainingItemsThresholdReachedCommand="{Binding FetchNextPhotoCommand}"
-                                HeightRequest="600">
+                                HeightRequest="764">
                     <CollectionView.ItemsLayout>
                         <GridItemsLayout Orientation="Vertical" Span="3" VerticalItemSpacing="5" HorizontalItemSpacing="5"/>
                     </CollectionView.ItemsLayout>
@@ -48,7 +48,13 @@
                     </CollectionView.GroupHeaderTemplate>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <views:PhotoItemView Url="{Binding Url}" />
+                            <views:PhotoItemView Url="{Binding ThumnailUrl}">
+                                <views:PhotoItemView.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ViewPhotoCommand,
+                                                          Source={RelativeSource AncestorType={x:Type viewModels:PhotoViewModel}}}"
+                                                          CommandParameter="{Binding .}"/>
+                                </views:PhotoItemView.GestureRecognizers>
+                            </views:PhotoItemView>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
